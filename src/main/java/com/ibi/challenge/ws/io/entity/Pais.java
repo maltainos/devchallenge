@@ -1,10 +1,17 @@
 package com.ibi.challenge.ws.io.entity;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AccessLevel;
@@ -37,5 +44,13 @@ public class Pais {
 	
 	@Column(nullable = false, unique = true, length = 45)
 	private String capital;
+	
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "regiao_id")
+	private Regiao regiao;
+	
+	@OneToMany(mappedBy = "pais", cascade = CascadeType.ALL)
+	private List<SubRegiao> subRegioes;
+	
 	private float area;
 }
