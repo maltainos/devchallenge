@@ -1,5 +1,5 @@
 CREATE TABLE regioes(
-	id int not null primary key auto_increment,
-	regiao_id varchar(35) not null unique
-	nome varchar(35) not null unique
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	regiao_id VARCHAR(35) NOT NULL UNIQUE,
+	nome VARCHAR(35) NOT NULL UNIQUE
 );

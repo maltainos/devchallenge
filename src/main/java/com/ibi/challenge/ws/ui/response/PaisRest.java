@@ -1,4 +1,6 @@
-package com.ibi.challenge.ws.shared.dto;
+package com.ibi.challenge.ws.ui.response;
+
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -13,9 +15,12 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode
 @ToString
-public class RegiaoDTO {
-	
-	private Integer id;
-	private String regiaoId;
+public class PaisRest {
+
+	private String paisId;
 	private String nome;
+	private String capital;
+	private RegiaoRest regiao;
+	private List<SubRegiaoRest> subRegioes;
+	private float area;
 }

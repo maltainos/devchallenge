@@ -1,5 +1,5 @@
 package com.ibi.challenge.ws.ui.response;
 
-public class PaisResponse {
+public class SubRegiaoRest {
 
 }
