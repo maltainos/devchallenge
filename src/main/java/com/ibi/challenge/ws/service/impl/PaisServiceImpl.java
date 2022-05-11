@@ -15,16 +15,20 @@ import com.ibi.challenge.ws.exception.resource.ResourceNotFoundException;
 import com.ibi.challenge.ws.io.entity.Pais;
 import com.ibi.challenge.ws.io.repository.PaisRepository;
 import com.ibi.challenge.ws.service.PaisService;
+import com.ibi.challenge.ws.shared.ChallengeUtils;
 import com.ibi.challenge.ws.shared.dto.PaisDTO;
 
 public class PaisServiceImpl implements PaisService {
+	
+	@Autowired
+	private ChallengeUtils utils;
 
 	@Autowired
 	private PaisRepository paisRepository;
 
 	@Override
 	public List<PaisDTO> getPaises(int page, int limit, String sortColumn, String sortMode) {
-		
+
 		if (page > 0)
 			page = page - 1;
 		Sort sort = sortMode.toLowerCase().equals("asc") ? Sort.by(sortColumn).ascending()
@@ -50,19 +54,32 @@ public class PaisServiceImpl implements PaisService {
 
 	@Override
 	public PaisDTO createPais(PaisDTO paisDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Pais pais = fromDTOToEntity(paisDTO);
+
+		pais.setPaisId(utils.generateResourceId(35));
+		Pais savedPais = paisRepository.save(pais);
+
+		PaisDTO returnValue = fromEntityToDTO(savedPais);
+
+		return returnValue;
 	}
 
 	@Override
 	public PaisDTO updatePais(PaisDTO paisDTO, String paisId) {
-		// TODO Auto-generated method stub
-		return null;
+
+		PaisDTO updatePais = getPais(paisId);
+		updatePais.setNome(paisDTO.getNome());
+		
+		Pais pais = fromDTOToEntity(updatePais);
+		pais = paisRepository.save(pais);
+		
+		return fromEntityToDTO(pais);
 	}
 
 	@Override
 	public boolean deletePais(String paisId) {
-		
+
 		PaisDTO updateRegiao = getPais(paisId);
 
 		Pais deletePais = fromDTOToEntity(updateRegiao);
