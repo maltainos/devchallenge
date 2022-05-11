@@ -17,6 +17,7 @@ import com.ibi.challenge.ws.io.entity.Regiao;
 import com.ibi.challenge.ws.io.repository.RegiaoRepository;
 import com.ibi.challenge.ws.service.RegiaoService;
 import com.ibi.challenge.ws.shared.ChallengeUtils;
+import com.ibi.challenge.ws.shared.dto.PaisDTO;
 import com.ibi.challenge.ws.shared.dto.RegiaoDTO;
 
 @Service
@@ -27,6 +28,9 @@ public class RegiaoServiceImpl implements RegiaoService {
 
 	@Autowired
 	private RegiaoRepository regiaoRepository;
+	
+	@Autowired
+	private PaisServiceImpl paisService;
 
 	@Override
 	public List<RegiaoDTO> getRegioes(int page, int limit, String sortColumn, String sortMode) {
@@ -110,6 +114,17 @@ public class RegiaoServiceImpl implements RegiaoService {
 		List<RegiaoDTO> returnValue = new ArrayList<>();
 		regioes.forEach(regiao -> returnValue.add(fromEntityToDTO(regiao)));
 
+		return returnValue;
+	}
+
+	@Override
+	public PaisDTO createPais(PaisDTO paisDTO, String regiaoId) {
+		
+		RegiaoDTO regiaoDTO = getRegiao(regiaoId);
+		paisDTO.setRegiao(regiaoDTO);
+		
+		PaisDTO returnValue = paisService.createPais(paisDTO);
+		System.out.println(returnValue);
 		return returnValue;
 	}
 

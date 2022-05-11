@@ -10,14 +10,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import com.ibi.challenge.ws.exception.resource.ResourceNotFoundException;
 import com.ibi.challenge.ws.io.entity.Pais;
+import com.ibi.challenge.ws.io.entity.Regiao;
 import com.ibi.challenge.ws.io.repository.PaisRepository;
 import com.ibi.challenge.ws.service.PaisService;
 import com.ibi.challenge.ws.shared.ChallengeUtils;
 import com.ibi.challenge.ws.shared.dto.PaisDTO;
+import com.ibi.challenge.ws.shared.dto.RegiaoDTO;
 
+@Service
 public class PaisServiceImpl implements PaisService {
 	
 	@Autowired
@@ -56,12 +60,21 @@ public class PaisServiceImpl implements PaisService {
 	public PaisDTO createPais(PaisDTO paisDTO) {
 		
 		Pais pais = fromDTOToEntity(paisDTO);
-
+		
+		Regiao regiao = new Regiao();
+		BeanUtils.copyProperties(paisDTO.getRegiao(), regiao);
+		
+		pais.setRegiao(regiao);
+		
+		pais.getRegiao().setId(paisDTO.getRegiao().getId());
+		
 		pais.setPaisId(utils.generateResourceId(35));
+		
 		Pais savedPais = paisRepository.save(pais);
 
 		PaisDTO returnValue = fromEntityToDTO(savedPais);
-
+		returnValue.setRegiao(paisDTO.getRegiao());
+		
 		return returnValue;
 	}
 
@@ -104,10 +117,23 @@ public class PaisServiceImpl implements PaisService {
 		return returnValue;
 	}
 
+	private RegiaoDTO fromEntityToDTO(Regiao regiao) {
+
+		RegiaoDTO returnValue = new RegiaoDTO();
+		BeanUtils.copyProperties(regiao, returnValue);
+		
+		return returnValue;
+	}
+	
 	private List<PaisDTO> listFromEntityToDTO(List<Pais> paises) {
 
 		List<PaisDTO> returnValue = new ArrayList<>();
-		paises.forEach(pais -> returnValue.add(fromEntityToDTO(pais)));
+		
+		paises.forEach(pais -> {
+			PaisDTO paisDTO = fromEntityToDTO(pais);
+			paisDTO.setRegiao(fromEntityToDTO(pais.getRegiao()));
+			returnValue.add(paisDTO);		
+		});
 
 		return returnValue;
 	}

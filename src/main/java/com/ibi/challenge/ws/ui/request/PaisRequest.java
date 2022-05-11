@@ -33,7 +33,6 @@ public class PaisRequest {
 
 	private List<SubRegiaoRequest> subRegioes;
 	
-	@NotBlank
 	@NotNull
 	private float area;
 }

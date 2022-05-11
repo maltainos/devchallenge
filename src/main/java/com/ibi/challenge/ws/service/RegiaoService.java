@@ -2,6 +2,7 @@ package com.ibi.challenge.ws.service;
 
 import java.util.List;
 
+import com.ibi.challenge.ws.shared.dto.PaisDTO;
 import com.ibi.challenge.ws.shared.dto.RegiaoDTO;
 
 public interface RegiaoService {
@@ -11,4 +12,5 @@ public interface RegiaoService {
 	public RegiaoDTO createRegiao(RegiaoDTO regiaoDTO);
 	public RegiaoDTO updateRegiao(RegiaoDTO regiaoDTO, String regiaoId);
 	public boolean deleteRegiao(String regiaoId);
+	public PaisDTO createPais(PaisDTO paisDTO, String regiaoId);
 }

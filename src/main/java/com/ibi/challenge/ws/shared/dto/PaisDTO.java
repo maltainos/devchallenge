@@ -2,9 +2,6 @@ package com.ibi.challenge.ws.shared.dto;
 
 import java.util.List;
 
-import com.ibi.challenge.ws.ui.response.RegiaoRest;
-import com.ibi.challenge.ws.ui.response.SubRegiaoRest;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,7 +21,7 @@ public class PaisDTO {
 	private String paisId;
 	private String nome;
 	private String capital;
-	private RegiaoRest regiao;
-	private List<SubRegiaoRest> subRegioes;
+	private RegiaoDTO regiao;
+	private List<SubRegiaoDTO> subRegioes;
 	private float area;
 }

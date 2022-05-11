@@ -21,8 +21,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ibi.challenge.ws.service.impl.RegiaoServiceImpl;
+import com.ibi.challenge.ws.shared.dto.PaisDTO;
 import com.ibi.challenge.ws.shared.dto.RegiaoDTO;
+import com.ibi.challenge.ws.ui.request.PaisRequest;
 import com.ibi.challenge.ws.ui.request.RegiaoRequest;
+import com.ibi.challenge.ws.ui.response.PaisRest;
 import com.ibi.challenge.ws.ui.response.RegiaoRest;
 
 @RestController
@@ -73,6 +76,22 @@ public class RegiaoController {
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void deleteRegiao(@PathVariable String regiaoId) {
 		regiaoService.deleteRegiao(regiaoId);
+	}
+	
+	
+	@PostMapping(path = "/{regiaoId}/paises")
+	public ResponseEntity<PaisRest> createPais(@Valid @RequestBody PaisRequest paisRequest, @PathVariable String regiaoId) {
+
+		PaisDTO paisDTO = new PaisDTO();
+		BeanUtils.copyProperties(paisRequest, paisDTO);
+		
+		PaisDTO savedPaisDTO = regiaoService.createPais(paisDTO, regiaoId);
+		PaisRest returnValue = new PaisRest();
+		BeanUtils.copyProperties(savedPaisDTO, returnValue);	
+		
+		returnValue.setRegiao(fromDTOtoRest(savedPaisDTO.getRegiao()));
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
 	}
 	
 	private RegiaoDTO fromRequestToDTO(RegiaoRequest regiaoRequest) {

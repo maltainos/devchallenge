@@ -22,8 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ibi.challenge.ws.service.impl.PaisServiceImpl;
 import com.ibi.challenge.ws.shared.dto.PaisDTO;
+import com.ibi.challenge.ws.shared.dto.RegiaoDTO;
 import com.ibi.challenge.ws.ui.request.PaisRequest;
 import com.ibi.challenge.ws.ui.response.PaisRest;
+import com.ibi.challenge.ws.ui.response.RegiaoRest;
 
 @RestController
 @RequestMapping(path = "/paises")
@@ -42,12 +44,16 @@ public class PaisController {
 
 		List<PaisDTO> paisesDTO = paisService.getPaises(page, limit, sortColumn, sortMode);
 
-		return listFromDTOtoRest(paisesDTO);
+		List<PaisRest> returnValue = listFromDTOtoRest(paisesDTO);
+		
+		return returnValue;
 	}
 
 	@GetMapping(path = "/{regiaoId}")
 	public ResponseEntity<PaisRest> getPais(@PathVariable String paisId) {
+		
 		PaisDTO paisDTO = paisService.getPais(paisId);
+		 
 		return ResponseEntity.status(HttpStatus.FOUND).body(fromDTOtoRest(paisDTO));
 	}
 
@@ -95,11 +101,21 @@ public class PaisController {
 
 		List<PaisRest> returnValue = new ArrayList<>();
 
-		for (PaisDTO paisDTO : paisesDTO)
-			returnValue.add(fromDTOtoRest(paisDTO));
-
+		for (PaisDTO paisDTO : paisesDTO) {
+			PaisRest paisRest = fromDTOtoRest(paisDTO);
+			paisRest.setRegiao(fromDTOtoRest(paisDTO.getRegiao()));
+			returnValue.add(paisRest);
+		}
+		
 		return returnValue;
 	}
 
+	private RegiaoRest fromDTOtoRest(RegiaoDTO regiaoDTO) {
+
+		RegiaoRest returnValue = new RegiaoRest();
+		BeanUtils.copyProperties(regiaoDTO, returnValue);
+
+		return returnValue;
+	}
 
 }
