@@ -5,5 +5,5 @@ CREATE TABLE paises(
 	capital varchar(45) not null unique,
 	area decimal(4.2) not null,
 	regiao_id int not null,
-	foreign key(regiao_id) references regioes(id)
+	foreign key(regiao_id) references regioes(id) ON DELETE CASCADE
 );

@@ -13,10 +13,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.ibi.challenge.ws.exception.resource.ResourceNotFoundException;
+import com.ibi.challenge.ws.io.entity.Pais;
 import com.ibi.challenge.ws.io.entity.SubRegiao;
 import com.ibi.challenge.ws.io.repository.SubRegiaoRepository;
 import com.ibi.challenge.ws.service.SubRegiaoService;
 import com.ibi.challenge.ws.shared.ChallengeUtils;
+import com.ibi.challenge.ws.shared.dto.PaisDTO;
 import com.ibi.challenge.ws.shared.dto.SubRegiaoDTO;
 
 @Service
@@ -94,7 +96,11 @@ public class SubRegiaoServiceImpl implements SubRegiaoService {
 
 		SubRegiao returnValue = new SubRegiao();
 		BeanUtils.copyProperties(subRegiaoDTO, returnValue);
-
+		
+		Pais pais = new Pais();
+		BeanUtils.copyProperties(subRegiaoDTO.getPais(), pais);
+		
+		returnValue.setPais(pais);
 		return returnValue;
 	}
 
@@ -102,6 +108,11 @@ public class SubRegiaoServiceImpl implements SubRegiaoService {
 
 		SubRegiaoDTO returnValue = new SubRegiaoDTO();
 		BeanUtils.copyProperties(subRegiao, returnValue);
+		
+		PaisDTO paisDTO = new PaisDTO();
+		BeanUtils.copyProperties(subRegiao.getPais(), paisDTO);
+		
+		returnValue.setPais(paisDTO);
 
 		return returnValue;
 	}

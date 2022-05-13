@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,8 +38,7 @@ public class RegiaoController {
 
 	@GetMapping
 	@ResponseStatus(code = HttpStatus.OK, value = HttpStatus.OK)
-	public List<RegiaoRest> getRegioes(
-			@RequestParam(value = "page", defaultValue = "1") int page,
+	public List<RegiaoRest> getRegioes(@RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(value = "limit", defaultValue = "10") int limit,
 			@RequestParam(value = "sortColumn", defaultValue = "id") String sortColumn,
 			@RequestParam(value = "sortMode", defaultValue = "asc") String sortMode) {
@@ -51,7 +51,10 @@ public class RegiaoController {
 	@GetMapping(path = "/{regiaoId}")
 	public ResponseEntity<RegiaoRest> getRegiao(@PathVariable String regiaoId) {
 		RegiaoDTO regiaoDTO = regiaoService.getRegiao(regiaoId);
-		return ResponseEntity.status(HttpStatus.FOUND).body(fromDTOtoRest(regiaoDTO));
+
+		RegiaoRest returnValue = fromDTOtoRest(regiaoDTO);
+	
+		return ResponseEntity.status(HttpStatus.FOUND).body(returnValue);
 	}
 
 	@PostMapping
@@ -65,35 +68,44 @@ public class RegiaoController {
 	}
 
 	@PutMapping(path = "/{regiaoId}")
-	public ResponseEntity<RegiaoRest> updateRegiao(@Valid @RequestBody RegiaoRequest regiaoRequest, @PathVariable String regiaoId) {
-		
+	public ResponseEntity<RegiaoRest> updateRegiao(@Valid @RequestBody RegiaoRequest regiaoRequest,
+			@PathVariable String regiaoId) {
+
 		RegiaoDTO regiaoDTO = fromRequestToDTO(regiaoRequest);
 		RegiaoDTO updatedRegiao = regiaoService.updateRegiao(regiaoDTO, regiaoId);
-		return ResponseEntity.status(HttpStatus.OK).body(fromDTOtoRest(updatedRegiao));
+
+		RegiaoRest returnValue = fromDTOtoRest(updatedRegiao);
+
+		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
-	
+
 	@DeleteMapping(path = "/{regiaoId}")
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void deleteRegiao(@PathVariable String regiaoId) {
 		regiaoService.deleteRegiao(regiaoId);
 	}
-	
-	
+
 	@PostMapping(path = "/{regiaoId}/paises")
-	public ResponseEntity<PaisRest> createPais(@Valid @RequestBody PaisRequest paisRequest, @PathVariable String regiaoId) {
+	public ResponseEntity<PaisRest> createPais(@Valid @RequestBody PaisRequest paisRequest,
+			@PathVariable String regiaoId) {
 
 		PaisDTO paisDTO = new PaisDTO();
 		BeanUtils.copyProperties(paisRequest, paisDTO);
-		
+
 		PaisDTO savedPaisDTO = regiaoService.createPais(paisDTO, regiaoId);
 		PaisRest returnValue = new PaisRest();
-		BeanUtils.copyProperties(savedPaisDTO, returnValue);	
-		
+		BeanUtils.copyProperties(savedPaisDTO, returnValue);
+
 		returnValue.setRegiao(fromDTOtoRest(savedPaisDTO.getRegiao()));
-		
+
+		returnValue.add(WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(PaisController.class)
+						.getPais(returnValue.getPaisId()))
+				.withSelfRel());
+
 		return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
 	}
-	
+
 	private RegiaoDTO fromRequestToDTO(RegiaoRequest regiaoRequest) {
 
 		RegiaoDTO returnValue = new RegiaoDTO();
@@ -107,6 +119,10 @@ public class RegiaoController {
 		RegiaoRest returnValue = new RegiaoRest();
 		BeanUtils.copyProperties(regiaoDTO, returnValue);
 
+		returnValue.add(WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(RegiaoController.class).getRegiao(returnValue.getRegiaoId()))
+				.withSelfRel());
+		
 		return returnValue;
 	}
 

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.ibi.challenge.ws.exception.resource.ResourceExistException;
 import com.ibi.challenge.ws.exception.resource.ResourceNotFoundException;
 import com.ibi.challenge.ws.io.entity.Regiao;
 import com.ibi.challenge.ws.io.repository.RegiaoRepository;
@@ -59,7 +60,10 @@ public class RegiaoServiceImpl implements RegiaoService {
 
 	@Override
 	public RegiaoDTO createRegiao(RegiaoDTO regiaoDTO) {
-
+		
+		if(regiaoRepository.findByNome(regiaoDTO.getNome()).isPresent())
+			throw new ResourceExistException(regiaoDTO.getNome()+" já existe");
+		
 		Regiao regiao = fromDTOToEntity(regiaoDTO);
 		
 		regiao.setRegiaoId(utils.generateResourceId(35));

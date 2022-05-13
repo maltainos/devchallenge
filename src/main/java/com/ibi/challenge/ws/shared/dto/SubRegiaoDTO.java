@@ -1,7 +1,5 @@
 package com.ibi.challenge.ws.shared.dto;
 
-import com.ibi.challenge.ws.io.entity.Pais;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,5 +18,5 @@ public class SubRegiaoDTO {
 	private Integer id;
 	private String subRegiaoId;
 	private String nome;
-	private Pais pais;
+	private PaisDTO pais;
 }

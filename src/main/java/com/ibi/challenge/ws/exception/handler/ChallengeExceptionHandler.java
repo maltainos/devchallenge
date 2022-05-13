@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.ibi.challenge.ws.exception.resource.MensagemException;
+import com.ibi.challenge.ws.exception.resource.ResourceExistException;
 import com.ibi.challenge.ws.exception.resource.ResourceNotFoundException;
 
 @ControllerAdvice
@@ -32,6 +33,20 @@ public class ChallengeExceptionHandler extends ResponseEntityExceptionHandler{
 		
 		
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(msg);
+	}
+	
+	@ExceptionHandler({ResourceExistException.class})
+	public ResponseEntity<MensagemException> handleResourceExistException(ResourceExistException ex){
+		
+		MensagemException msg = new MensagemException();
+		msg.setRecurso(ex.getMessage());
+		msg.setMensagem(messageSource.getMessage("resource.exist",null, LocaleContextHolder.getLocale()));
+		msg.setException(ex.getClass().toString());
+		msg.setTimestamp(LocalDateTime.now());
+		msg.setStatus(HttpStatus.IM_USED);
+		
+		
+		return ResponseEntity.status(HttpStatus.IM_USED).body(msg);
 	}
 
 }

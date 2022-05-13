@@ -11,5 +11,7 @@ import com.ibi.challenge.ws.io.entity.Pais;
 public interface PaisRepository extends PagingAndSortingRepository<Pais, Integer>{
 
 	public Optional<Pais> findByPaisId(String paisId);
+	public Optional<Pais> findByNome(String nome);
+	public Optional<Pais> findByCapital(String capital);
 
 }

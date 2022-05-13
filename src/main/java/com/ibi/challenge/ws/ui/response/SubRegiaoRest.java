@@ -1,5 +1,7 @@
 package com.ibi.challenge.ws.ui.response;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,10 +13,10 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @ToString
-public class SubRegiaoRest {
+public class SubRegiaoRest extends RepresentationModel<SubRegiaoRest>{
 	
+	private String subRegiaoId;
 	private String nome;
-	private String paisId;
 }
