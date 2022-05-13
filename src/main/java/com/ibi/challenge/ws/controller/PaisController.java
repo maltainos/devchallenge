@@ -54,7 +54,10 @@ public class PaisController {
 		
 		CollectionModel<PaisRest> collectionReturnValue = CollectionModel.of(returnValue);
 		
-		collectionReturnValue.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PaisController.class).getRegioes(page, limit, sortColumn, sortMode)).withRel(IanaLinkRelations.COLLECTION));
+		collectionReturnValue.add(WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(PaisController.class)
+						.getRegioes(page, limit, sortColumn, sortMode))
+				.withRel(IanaLinkRelations.COLLECTION));
 		
 		return collectionReturnValue;
 	}
@@ -142,9 +145,9 @@ public class PaisController {
 			SubRegiaoRest addValue = new SubRegiaoRest();
 			BeanUtils.copyProperties(subRegiaoDTO, addValue);
 			
-			addValue.add(WebMvcLinkBuilder.linkTo(
-					WebMvcLinkBuilder.methodOn(
-							SubRegiaoController.class).getSubRegiao(addValue.getSubRegiaoId())).withSelfRel());
+			addValue.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+					.methodOn(SubRegiaoController.class).getSubRegiao(
+							addValue.getSubRegiaoId())).withSelfRel());
 
 			returnValue.add(addValue);
 		}
@@ -173,7 +176,7 @@ public class PaisController {
 		returnValue.add(WebMvcLinkBuilder
 				.linkTo(WebMvcLinkBuilder.methodOn(RegiaoController.class).getRegiao(returnValue.getRegiaoId()))
 				.withSelfRel());
-
+		
 		return returnValue;
 	}
 

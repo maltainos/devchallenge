@@ -18,7 +18,7 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @ToString
-@Relation(collectionRelation = "Paises", itemRelation = "pais")
+@Relation(collectionRelation = "paises", itemRelation = "pais")
 public class PaisRest extends RepresentationModel<PaisRest>{
 
 	private String paisId;

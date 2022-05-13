@@ -51,7 +51,10 @@ public class RegiaoController {
 		
 		CollectionModel<RegiaoRest> collectionReturnValue = CollectionModel.of(returnValue);
 		
-		collectionReturnValue.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RegiaoController.class).getRegioes(page, limit, sortColumn, sortMode)).withRel(IanaLinkRelations.COLLECTION));
+		collectionReturnValue.add(WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(RegiaoController.class)
+						.getRegioes(page, limit, sortColumn, sortMode))
+				.withRel(IanaLinkRelations.COLLECTION));
 		
 		return collectionReturnValue;
 	}
@@ -128,7 +131,8 @@ public class RegiaoController {
 		BeanUtils.copyProperties(regiaoDTO, returnValue);
 
 		returnValue.add(WebMvcLinkBuilder
-				.linkTo(WebMvcLinkBuilder.methodOn(RegiaoController.class).getRegiao(returnValue.getRegiaoId()))
+				.linkTo(WebMvcLinkBuilder.methodOn(RegiaoController.class)
+						.getRegiao(returnValue.getRegiaoId()))
 				.withSelfRel());
 		
 		return returnValue;
