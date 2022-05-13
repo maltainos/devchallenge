@@ -3,6 +3,7 @@ package com.ibi.challenge.ws.ui.response;
 import java.util.List;
 
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -17,6 +18,7 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @ToString
+@Relation(collectionRelation = "Paises", itemRelation = "pais")
 public class PaisRest extends RepresentationModel<PaisRest>{
 
 	private String paisId;

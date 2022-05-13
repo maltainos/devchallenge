@@ -7,6 +7,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,14 +40,20 @@ public class RegiaoController {
 
 	@GetMapping
 	@ResponseStatus(code = HttpStatus.OK, value = HttpStatus.OK)
-	public List<RegiaoRest> getRegioes(@RequestParam(value = "page", defaultValue = "1") int page,
+	public CollectionModel<RegiaoRest> getRegioes(@RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(value = "limit", defaultValue = "10") int limit,
 			@RequestParam(value = "sortColumn", defaultValue = "id") String sortColumn,
 			@RequestParam(value = "sortMode", defaultValue = "asc") String sortMode) {
 
 		List<RegiaoDTO> regioesDTO = regiaoService.getRegioes(page, limit, sortColumn, sortMode);
 
-		return listFromDTOtoRest(regioesDTO);
+		List<RegiaoRest> returnValue = listFromDTOtoRest(regioesDTO);
+		
+		CollectionModel<RegiaoRest> collectionReturnValue = CollectionModel.of(returnValue);
+		
+		collectionReturnValue.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RegiaoController.class).getRegioes(page, limit, sortColumn, sortMode)).withRel(IanaLinkRelations.COLLECTION));
+		
+		return collectionReturnValue;
 	}
 
 	@GetMapping(path = "/{regiaoId}")

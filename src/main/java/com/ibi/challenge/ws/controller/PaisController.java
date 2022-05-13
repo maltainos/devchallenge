@@ -7,6 +7,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,7 +42,7 @@ public class PaisController {
 
 	@GetMapping
 	@ResponseStatus(code = HttpStatus.OK, value = HttpStatus.OK)
-	public List<PaisRest> getRegioes(
+	public CollectionModel<PaisRest> getRegioes(
 			@RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(value = "limit", defaultValue = "10") int limit,
 			@RequestParam(value = "sortColumn", defaultValue = "id") String sortColumn,
@@ -49,7 +52,11 @@ public class PaisController {
 
 		List<PaisRest> returnValue = listFromDTOtoRest(paisesDTO);
 		
-		return returnValue;
+		CollectionModel<PaisRest> collectionReturnValue = CollectionModel.of(returnValue);
+		
+		collectionReturnValue.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PaisController.class).getRegioes(page, limit, sortColumn, sortMode)).withRel(IanaLinkRelations.COLLECTION));
+		
+		return collectionReturnValue;
 	}
 
 	@GetMapping(path = "/{paisId}")
@@ -117,6 +124,12 @@ public class PaisController {
 		returnValue.setRegiao(fromDTOtoRest(paisDTO.getRegiao()));
 		
 		returnValue.setSubRegioes(listFromDTOtoRestInSubRegiao(paisDTO.getSubRegioes()));
+		
+
+		returnValue.add(WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(PaisController.class)
+						.getPais(returnValue.getPaisId()))
+				.withSelfRel());
 
 		return returnValue;
 	}
@@ -128,6 +141,11 @@ public class PaisController {
 		for (SubRegiaoDTO subRegiaoDTO : subRegioesDTO) {
 			SubRegiaoRest addValue = new SubRegiaoRest();
 			BeanUtils.copyProperties(subRegiaoDTO, addValue);
+			
+			addValue.add(WebMvcLinkBuilder.linkTo(
+					WebMvcLinkBuilder.methodOn(
+							SubRegiaoController.class).getSubRegiao(addValue.getSubRegiaoId())).withSelfRel());
+
 			returnValue.add(addValue);
 		}
 		
@@ -151,6 +169,10 @@ public class PaisController {
 
 		RegiaoRest returnValue = new RegiaoRest();
 		BeanUtils.copyProperties(regiaoDTO, returnValue);
+		
+		returnValue.add(WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(RegiaoController.class).getRegiao(returnValue.getRegiaoId()))
+				.withSelfRel());
 
 		return returnValue;
 	}

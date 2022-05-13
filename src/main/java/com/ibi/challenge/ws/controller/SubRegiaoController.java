@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,12 +34,18 @@ public class SubRegiaoController {
 	
 	@GetMapping
 	@ResponseStatus(code = HttpStatus.OK)
-	public List<SubRegiaoRest> getSubRegioes(@RequestParam(value = "page", defaultValue = "1")int page, @RequestParam(value = "limit", defaultValue = "10")int limit, @RequestParam(value = "sortColumn", defaultValue = "id")String sortColumn, @RequestParam(value = "sortMode", defaultValue = "asc")String sortMode){
+	public CollectionModel<SubRegiaoRest> getSubRegioes(@RequestParam(value = "page", defaultValue = "1")int page, @RequestParam(value = "limit", defaultValue = "10")int limit, @RequestParam(value = "sortColumn", defaultValue = "id")String sortColumn, @RequestParam(value = "sortMode", defaultValue = "asc")String sortMode){
 		
 		List<SubRegiaoDTO> subRegiaoDTO = subRegiaoService.getSubRegioes(page, limit, sortColumn, sortMode);
 		List<SubRegiaoRest> returnValue = listFromDTOtoRest(subRegiaoDTO);
+		CollectionModel<SubRegiaoRest> collectionReturnValue = CollectionModel.of(returnValue);
 		
-		return returnValue;
+		collectionReturnValue.add(WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(SubRegiaoController.class)
+						.getSubRegioes(page, limit, sortColumn, sortMode))
+				.withRel(IanaLinkRelations.COLLECTION));
+		
+		return collectionReturnValue;
 	}
 	
 	@GetMapping(path = "/{subRegiaoId}")
@@ -45,10 +53,6 @@ public class SubRegiaoController {
 		
 		SubRegiaoDTO subRegiaoDTO = subRegiaoService.getSubRegiao(subRegiaoId);
 		SubRegiaoRest returnValue = fromDTOtoRest(subRegiaoDTO);
-		
-		returnValue.add(WebMvcLinkBuilder.linkTo(
-				WebMvcLinkBuilder.methodOn(
-						SubRegiaoController.class).getSubRegiao(subRegiaoId)).withSelfRel());
 		
 		return ResponseEntity.status(HttpStatus.FOUND).body(returnValue);
 	}
@@ -62,10 +66,6 @@ public class SubRegiaoController {
 		subRegiaoDTO = subRegiaoService.updateSubRegiao(subRegiaoDTO, subRegiaoId);
 		
 		SubRegiaoRest returnValue = fromDTOtoRest(subRegiaoDTO);
-		
-		returnValue.add(WebMvcLinkBuilder.linkTo(
-				WebMvcLinkBuilder.methodOn(
-						SubRegiaoController.class).getSubRegiao(subRegiaoId)).withSelfRel());
 		
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
@@ -83,6 +83,10 @@ public class SubRegiaoController {
 		SubRegiaoRest returnValue = new SubRegiaoRest();
 		BeanUtils.copyProperties(subRegiaoDTO, returnValue);
 		//returnValue.setPaisId(subRegiaoDTO.getPais().getPaisId());
+		
+		returnValue.add(WebMvcLinkBuilder.linkTo(
+				WebMvcLinkBuilder.methodOn(
+						SubRegiaoController.class).getSubRegiao(returnValue.getSubRegiaoId())).withSelfRel());
 		
 		return returnValue;
 	}
